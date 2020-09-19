@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using JSW___Nyous.Contexts;
 using JSW___Nyous.Domains;
+using JSW___Nyous.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,10 @@ namespace JSW___Nyous.Controllers
 
         private Usuario AuthenticateUser(Usuario login)
         {
+            // Criptografar a senha
+            // SALT = 4 primeiras letras do e-mail do usuário
+            login.Senha = Crypto.Criptografar(login.Senha, login.Email.Substring(0, 4));
+
             return _context.Usuario
                 .Include(a => a.IdAcessoNavigation)
                 .FirstOrDefault(u => u.Email == login.Email && u.Senha == login.Senha);
